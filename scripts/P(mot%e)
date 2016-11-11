@@ -1,0 +1,56 @@
+import numpy as np 
+import re
+import pandas as pd
+from nltk.corpus import stopwords
+from collections import Counter
+from nltk.tokenize import word_tokenize
+import collections
+ 
+
+data=pd.read_csv("Tweets.csv")
+  
+def review_to_words( review ):
+    review_text = review
+    no_punctions = re.sub("[^a-zA-Z]", " ", review_text) 
+    wordslower= no_punctions.lower()
+    words = word_tokenize(wordslower)  
+    stopswd = set(stopwords.words("english"))                  
+    meaningful_wd = [w for w in words if not w in stopswd]
+    return(meaningful_wd)
+
+
+
+
+ReviewsPos=[]
+copos=collections.Counter()         
+dataPos=data[data['airline_sentiment']=='positive']
+for i in range(0, len(dataPos)):
+    ReviewsPos.append(review_to_words(dataPos['text'].tolist()[i]))
+    copos.update(ReviewsPos[i])       
+
+for w in copos.keys(): print("positive "+w+" "+str(copos[w]/float(len(dataPos)))) 
+
+
+
+ReviewsNeg=[]
+coneg=collections.Counter()        
+dataNeg=data[data['airline_sentiment']=='negative']
+for i in range(0, len(dataNeg)):
+    ReviewsNeg.append(review_to_words(dataNeg['text'].tolist()[i]))
+    coneg.update(ReviewsNeg[i])      
+
+for w in coneg.keys(): print("negative "+w+" "+str(coneg[w]/float(len(dataNeg)))) 
+
+
+
+
+ReviewsNeutre=[]
+coneu=collections.Counter()           
+dataNeutre=data[data['airline_sentiment']=='neutral']
+for i in range(0, len(dataNeutre)):
+    ReviewsNeutre.append(review_to_words(dataNeutre['text'].tolist()[i]))
+    coneu.update(ReviewsNeutre[i])       
+
+for w in coneu.keys(): print("neutre "+w+" "+str(coneu[w]/float(len(dataNeutre)))) 
+
+
